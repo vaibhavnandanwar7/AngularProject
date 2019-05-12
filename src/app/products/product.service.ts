@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
 import { IProduct } from "./product";
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError  } from 'rxjs';
+import { Observable } from 'rxjs';
+import {_throw} from 'rxjs/observable/throw';
 import { catchError, tap } from 'rxjs/operators';
 
 @Injectable(
@@ -11,7 +12,7 @@ export class ProductService {
 
     private productUrl = 'api/products/products.json';
 
-    constructor(private httpClient: HttpClient){}
+    constructor(private http: HttpClient){}
 
     getProducts(): Observable<IProduct[]> {
         return this.http.get<IProduct[]>(this.productUrl).pipe(
@@ -33,6 +34,7 @@ export class ProductService {
           errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
         }
         console.error(errorMessage);
-        return throwError(errorMessage);
+        //sreturn throwError(errorMessage);
+        return _throw(errorMessage);
       }
 }
