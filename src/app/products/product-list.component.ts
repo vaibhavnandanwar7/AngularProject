@@ -6,16 +6,18 @@ import { ProductService } from './product.service';
     selector: 'pm-products',
     templateUrl: './product-list.component.html',
     styleUrls: ['./product-list.component.css'],
-   // providers: [ProductService] // for 1 component only
+    // providers: [ProductService] // for 1 component only
 })
 
 export class ProductListComponent implements OnInit {
-   
+
     pageTitle: string = 'Product List';
     imageWidth: number = 50;
     imageMargin: number = 2;
     showImage: boolean = false;
     _listFilter: string;
+    errorMessage: string;
+
     get listFilter(): string {
         return this._listFilter;
     }
@@ -27,8 +29,8 @@ export class ProductListComponent implements OnInit {
     filteredProducts: IProduct[];
     products: IProduct[] = [];
 
-    constructor(private productService :ProductService){
-        
+    constructor(private productService: ProductService) {
+
     }
 
     toggleImage(): void {
@@ -36,18 +38,25 @@ export class ProductListComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        console.log("In onInit");
-        this.products = this.productService.getProducts();
-        this.filteredProducts = this.products;
+        
+        this.productService.getProducts().subscribe(
+            products => { 
+                this.products = products;
+                this.filteredProducts = this.products;
+            },
+            error => this.errorMessage = <any>error
+
+        );
+        
     }
 
     performFilter(filterBy: string): IProduct[] {
         filterBy = filterBy.toLocaleLowerCase();
-        return this.products.filter((product:IProduct) =>
-        product.productName.toLocaleLowerCase().indexOf(filterBy) !==-1);
+        return this.products.filter((product: IProduct) =>
+            product.productName.toLocaleLowerCase().indexOf(filterBy) !== -1);
     }
 
-    onRatingClicked(message : string) : void{
-        this.pageTitle = 'Product List ' + message; 
+    onRatingClicked(message: string): void {
+        this.pageTitle = 'Product List ' + message;
     }
 }
